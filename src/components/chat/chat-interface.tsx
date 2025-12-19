@@ -9,15 +9,15 @@ import bgImage from '../../assets/images/background.png';
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 const ChatInterface = () => {
-  const [messages, setMessages] = useState<any[]>([]); 
+  const [messages, setMessages] = useState<any[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const bottomRef = useRef<any>(null);
 
   const suggestions = [
     { text: "Can you explain Newton's laws of motion?", isActive: false },
-    { text: "What is the difference between velocity and speed?", isActive: true }, 
+    { text: "What is the difference between velocity and speed?", isActive: true },
     { text: "Summarize the main themes of Hamlet.", isActive: false },
   ];
 
@@ -26,7 +26,7 @@ const ChatInterface = () => {
   }, [messages, isLoading]);
 
   const sendMessage = async () => {
-    if (inputValue === "" || isLoading) return;
+    if (inputValue.trim() === "" || isLoading) return;
 
     const text = inputValue;
     setInputValue('');
@@ -37,27 +37,26 @@ const ChatInterface = () => {
       parts: [{ text: text }]
     };
 
-    const currentHistory = [...messages, userMessage];
-    setMessages(currentHistory);
+    setMessages(prev => [...prev, userMessage]);
 
     try {
-      console.log("Connecting to Gemini...");
-
       const genAI = new GoogleGenerativeAI(API_KEY);
-      const model = genAI.getGenerativeModel({ 
+      const model = genAI.getGenerativeModel({
         model: "gemini-1.5-flash",
         systemInstruction: "You are a high school teacher. Answer only high school related questions (Math, Physics, Chemistry, Biology, History, etc.). If the user asks about games, movies or personal stuff, politely refuse. Keep answers educational and simple."
       });
 
-      const historyForApi = messages.map(msg => ({
+
+      const recentHistory = messages.slice(-10).map(msg => ({
         role: msg.role === 'user' ? 'user' : 'model',
-        parts: msg.parts
+        parts: [{ text: msg.parts[0].text }]
       }));
 
       const chat = model.startChat({
-        history: historyForApi,
+        history: recentHistory,
       });
 
+      console.log("Sending request to AI...");
       const result = await chat.sendMessage(text);
       const responseText = result.response.text();
 
@@ -80,11 +79,17 @@ const ChatInterface = () => {
     setIsLoading(false);
   };
 
+  const handleKeyDown = (e: any) => {
+    if (e.key === 'Enter') {
+      sendMessage();
+    }
+  };
+
   return (
     <div className="chat-interface-wrapper" style={{ backgroundImage: `url(${bgImage})` }}>
-      
+
       <div className={`content-container ${messages.length > 0 ? 'chat-mode' : ''}`}>
-        
+
         {messages.length === 0 ? (
           <header className="app-header">
             <img src={logo} alt="Logo" className="header-logo" />
@@ -92,20 +97,20 @@ const ChatInterface = () => {
           </header>
         ) : (
           <header className="mini-header">
-             <img src={logo} alt="Logo" className="mini-logo" />
+            <img src={logo} alt="Logo" className="mini-logo" />
           </header>
         )}
 
         <section className="interaction-section">
-          
+
           {messages.length > 0 && (
             <div className="messages-list">
-              {messages.map((msg: any, index: number) => (
+              {messages.map((msg, index) => (
                 <div key={index} className={`message-bubble ${msg.role === 'model' ? 'assistant' : 'user'}`}>
                   <div className="message-content">{msg.parts[0].text}</div>
                 </div>
               ))}
-              
+
               {isLoading && (
                 <div className="message-bubble assistant is-typing">
                   Thinking...
@@ -120,8 +125,8 @@ const ChatInterface = () => {
               <span className="suggestions-label">Suggestions on what to ask Our AI</span>
               <div className="suggestions-list">
                 {suggestions.map((item, index) => (
-                  <button 
-                    key={index} 
+                  <button
+                    key={index}
                     className={`suggestion-item ${item.isActive ? 'is-active' : ''}`}
                     onClick={() => setInputValue(item.text)}
                   >
@@ -133,15 +138,13 @@ const ChatInterface = () => {
           )}
 
           <div className="input-wrapper">
-            <input 
+            <input
               className="chat-input"
-              type="text" 
+              type="text"
               placeholder="Ask me anything about your lessons..."
               value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)} 
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') sendMessage();
-              }}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={handleKeyDown}
             />
             <button className="send-button" onClick={sendMessage}>
               <img src={sendIcon} alt="Send" className="send-icon" />
