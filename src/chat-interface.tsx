@@ -2,11 +2,11 @@ import { useState, useEffect, useRef } from 'react';
 import type { Content } from "@google/generative-ai";
 import './chat-interface.scss';
 
-import { getGeminiResponse } from '../../services/chat-service.ts';
+import { getGeminiResponse } from './services/chat-service.ts';
 
-import logo from '../../assets/images/logo.png';
-import sendIcon from '../../assets/images/vector.png';
-import bgImage from '../../assets/images/background.png';
+import logo from './assets/images/logo.png';
+import sendIcon from './assets/images/vector.png';
+import bgImage from './assets/images/background.png';
 
 interface ChatMessage {
   role: 'user' | 'model';

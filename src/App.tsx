@@ -1,4 +1,4 @@
-import ChatInterface from './components/chat/chat-interface';
+import ChatInterface from './chat-interface';
 
 function App() {
   return (
