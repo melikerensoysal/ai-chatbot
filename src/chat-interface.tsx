@@ -23,9 +23,9 @@ const ChatInterface = () => {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const suggestions = [
-    { text: "What can I ask you to do?", isActive: false },
-    { text: "Which one of my projects is performing the best?", isActive: true },
-    { text: "What projects should I be concerned about right now?", isActive: false },
+    { text: "What can I ask you to do?" },
+    { text: "Which one of my projects is performing the best?" },
+    { text: "What projects should I be concerned about right now?" },
   ];
 
   useEffect(() => {
@@ -130,7 +130,7 @@ const ChatInterface = () => {
                 {suggestions.map((item, index) => (
                   <button
                     key={index}
-                    className={`suggestion-item ${item.isActive ? 'is-active' : ''}`}
+                    className="suggestion-item"
                     onClick={() => setInputValue(item.text)}
                   >
                     {item.text}
