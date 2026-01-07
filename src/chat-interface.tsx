@@ -23,9 +23,9 @@ const ChatInterface = () => {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const suggestions = [
-    { text: "Can you explain Newton's laws of motion?", isActive: false },
-    { text: "What is the difference between velocity and speed?", isActive: true },
-    { text: "Summarize the main themes of Hamlet.", isActive: false },
+    { text: "What can I ask you to do?", isActive: false },
+    { text: "Which one of my projects is performing the best?", isActive: true },
+    { text: "What projects should I be concerned about right now?", isActive: false },
   ];
 
   useEffect(() => {
