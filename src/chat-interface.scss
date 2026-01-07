@@ -23,11 +23,11 @@
   padding: 40px 20px;
   display: flex;
   flex-direction: column;
-  
   box-sizing: border-box;
 
   .app-header {
-    margin-top: 60px;
+    margin-top: 20px;
+    flex-shrink: 0; 
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -47,14 +47,106 @@
 
   .interaction-section {
     flex: 1; 
-    
     min-height: 0; 
-    
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     gap: 24px;
     padding-bottom: 40px;
+
+    .chat-history {
+      flex: 1;
+      width: 100%;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      padding-right: 10px;
+
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+      &::-webkit-scrollbar-thumb {
+        background-color: rgba(0,0,0,0.1);
+        border-radius: 4px;
+      }
+
+      .message-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        max-width: 85%;
+
+        .message-label {
+          font-size: 11px;
+          font-weight: 700;
+          color: #888;
+          text-transform: uppercase;
+          margin-left: 2px;
+          letter-spacing: 0.5px;
+        }
+
+        .message-bubble {
+          padding: 18px 22px;
+          border-radius: 16px;
+          font-size: 15px;
+          line-height: 1.6;
+          color: #333;
+          white-space: pre-wrap;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+
+          &.error {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+          }
+
+          &.is-typing {
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 572px;
+
+            .thinking-icon {
+              width: 24px;
+              height: 24px;
+              display: block;
+              
+              animation: pulse 1.5s infinite ease-in-out;
+            }
+          }
+        }
+
+        &.user {
+          align-self: flex-start;
+          
+          .message-bubble {
+            background: #ffffff;
+            border: 1px solid rgba(0,0,0,0.05);
+            border-top-left-radius: 4px; 
+          }
+        }
+
+        &.ai {
+          align-self: flex-end; 
+          align-items: flex-end; 
+          
+          .message-label {
+            margin-right: 4px;
+            text-align: right;
+          }
+
+          .message-bubble {
+            background: #F3EAFE; 
+            border: 1px solid rgba(233, 213, 255, 0.5);
+            border-radius: 16px;
+            border-top-right-radius: 4px; 
+            border-top-left-radius: 16px;
+          }
+        }
+      }
+    }
 
     .suggestions-group {
       display: flex;

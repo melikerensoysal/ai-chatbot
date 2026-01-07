@@ -2,11 +2,12 @@ import { useState, useEffect, useRef } from 'react';
 import type { Content } from "@google/generative-ai";
 import './chat-interface.scss';
 
-import { getGeminiResponse } from './services/chat-service.ts';
+import { getGeminiResponse } from './services/chat-service';
 
-import logo from './assets/images/logo.png';
-import sendIcon from './assets/images/vector.png';
+import logo from './assets/images/logo.svg';
+import sendIcon from './assets/images/vector.svg';
 import bgImage from './assets/images/background.png';
+import thinkingIcon from './assets/images/thinking.svg'; 
 
 interface ChatMessage {
   role: 'user' | 'model';
@@ -57,7 +58,6 @@ const ChatInterface = () => {
 
     try {
       const historyPayload = generateHistoryForAI(messages);
-
       const responseText = await getGeminiResponse(userText, historyPayload);
 
       const aiMessage: ChatMessage = {
@@ -87,31 +87,36 @@ const ChatInterface = () => {
 
   return (
     <div className="chat-interface-wrapper" style={{ backgroundImage: `url(${bgImage})` }}>
-      <div className={`content-container ${messages.length > 0 ? 'chat-mode' : ''}`}>
+      <div className="content-container">
 
-        {messages.length === 0 ? (
-          <header className="app-header">
-            <img src={logo} alt="Logo" className="header-logo" />
-            <h1 className="header-title">Ask our AI anything</h1>
-          </header>
-        ) : (
-          <header className="mini-header">
-            <img src={logo} alt="Logo" className="mini-logo" />
-          </header>
-        )}
+        <header className="app-header">
+          <img src={logo} alt="Logo" className="header-logo" />
+          <h1 className="header-title">Ask our AI anything</h1>
+        </header>
 
         <section className="interaction-section">
           
           {messages.length > 0 && (
-            <div className="messages-list">
+            <div className="chat-history">
               {messages.map((msg, index) => (
-                <div key={index} className={`message-bubble ${msg.role === 'model' ? 'assistant' : 'user'} ${msg.isError ? 'error' : ''}`}>
-                  <div className="message-content">{msg.parts[0].text}</div>
+                <div key={index} className={`message-wrapper ${msg.role === 'user' ? 'user' : 'ai'}`}>
+                  
+                  <span className="message-label">
+                    {msg.role === 'user' ? 'ME' : 'OUR AI'}
+                  </span>
+                  
+                  <div className={`message-bubble ${msg.isError ? 'error' : ''}`}>
+                    {msg.parts[0].text}
+                  </div>
                 </div>
               ))}
+              
               {isLoading && (
-                <div className="message-bubble assistant is-typing">
-                  Thinking...
+                <div className="message-wrapper ai">
+                  <span className="message-label">OUR AI</span>
+                  <div className="message-bubble is-typing">
+                    <img src={thinkingIcon} alt="Thinking..." className="thinking-icon" />
+                  </div>
                 </div>
               )}
               <div ref={bottomRef} />
@@ -139,7 +144,7 @@ const ChatInterface = () => {
             <input
               className="chat-input"
               type="text"
-              placeholder="Ask me anything about your lessons..."
+              placeholder="Ask me anything about your projects"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
